@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>eda_ames_housing.ipynb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #cf8e6d;}
+.s2 { color: #bcbec4;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+eda_ames_housing.ipynb</font>
+</center></td></tr></table>
+<pre><span class="s0">#%% 
+</span><span class="s1">import </span><span class="s2">pandas </span><span class="s1">as </span><span class="s2">pd</span>
+<span class="s1">import </span><span class="s2">matplotlib</span><span class="s3">.</span><span class="s2">pyplot </span><span class="s1">as </span><span class="s2">plt</span>
+<span class="s3">%</span><span class="s2">matplotlib inline</span>
+<span class="s1">import </span><span class="s2">seaborn </span><span class="s1">as </span><span class="s2">sns</span>
+
+<span class="s0">#%% 
+</span><span class="s2">data </span><span class="s3">= </span><span class="s4">'data/Ames_Housing_Data.tsv'</span>
+<span class="s2">df </span><span class="s3">= </span><span class="s2">pd</span><span class="s3">.</span><span class="s2">read_csv</span><span class="s3">(</span><span class="s2">data</span><span class="s3">, </span><span class="s2">sep</span><span class="s3">=</span><span class="s4">'</span><span class="s1">\t</span><span class="s4">'</span><span class="s3">)</span>
+<span class="s0">#%% 
+</span><span class="s2">df</span><span class="s3">.</span><span class="s2">sample</span><span class="s3">(</span><span class="s5">5</span><span class="s3">)</span>
+<span class="s0">#%% md 
+</span><span class="s2">## Observation &amp; Inspection of the dataset 
+</span><span class="s0">#%% 
+</span><span class="s2">num_obs</span><span class="s3">, </span><span class="s2">num_feat </span><span class="s3">= </span><span class="s2">df</span><span class="s3">.</span><span class="s2">shape</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">'Rows:'</span><span class="s3">, </span><span class="s2">num_obs</span><span class="s3">, </span><span class="s4">'</span><span class="s1">\n</span><span class="s4">Cols:'</span><span class="s3">, </span><span class="s2">num_feat</span><span class="s3">)</span>
+<span class="s0">#%% 
+</span><span class="s2">df</span><span class="s3">.</span><span class="s2">info</span><span class="s3">()</span>
+<span class="s0">#%% 
+</span><span class="s2">tar_feat </span><span class="s3">= </span><span class="s4">'SalePrice'</span>
+
+<span class="s1">def </span><span class="s2">reset_var</span><span class="s3">(</span><span class="s2">val</span><span class="s3">):</span>
+    <span class="s2">inp_feat </span><span class="s3">= </span><span class="s2">val</span><span class="s3">.</span><span class="s2">iloc</span><span class="s3">[:, :-</span><span class="s5">1</span><span class="s3">]</span>
+    <span class="s2">numerical_cols </span><span class="s3">= </span><span class="s2">inp_feat</span><span class="s3">.</span><span class="s2">select_dtypes</span><span class="s3">(</span><span class="s4">'number'</span><span class="s3">).</span><span class="s2">columns</span>
+    <span class="s2">cat_cols </span><span class="s3">= </span><span class="s2">inp_feat</span><span class="s3">.</span><span class="s2">select_dtypes</span><span class="s3">(</span><span class="s4">'object'</span><span class="s3">).</span><span class="s2">columns</span>
+    
+    <span class="s1">return </span><span class="s2">inp_feat</span><span class="s3">, </span><span class="s2">numerical_cols</span><span class="s3">, </span><span class="s2">cat_cols</span>
+
+<span class="s2">x</span><span class="s3">, </span><span class="s2">num_cols</span><span class="s3">, </span><span class="s2">obj_cols </span><span class="s3">= </span><span class="s2">reset_var</span><span class="s3">(</span><span class="s2">df</span><span class="s3">)</span>
+
+<span class="s2">print</span><span class="s3">(</span><span class="s4">'Numerical Features:'</span><span class="s3">,</span><span class="s2">num_cols</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">], </span><span class="s4">'</span><span class="s1">\n</span><span class="s4">Categorical Features'</span><span class="s3">,</span><span class="s2">obj_cols</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">])</span>
+<span class="s0">#%% md 
+</span><span class="s2">## Treating Missing Values for num columns 
+</span><span class="s0">#%% 
+</span><span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols</span><span class="s3">].</span><span class="s2">describe</span><span class="s3">().</span><span class="s2">T</span>
+<span class="s0">#%% 
+</span><span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">().</span><span class="s2">sort_values</span><span class="s3">(</span><span class="s2">ascending</span><span class="s3">=</span><span class="s1">False</span><span class="s3">)</span>
+<span class="s0">#%% 
+# drop factor for any col with missing value of more than 3/4 of the observations</span>
+<span class="s2">drop_factor </span><span class="s3">= </span><span class="s2">df</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">] * (</span><span class="s5">3</span><span class="s3">/</span><span class="s5">4</span><span class="s3">)</span>
+<span class="s2">drop_num_cols </span><span class="s3">= [</span><span class="s2">x </span><span class="s1">for </span><span class="s2">x </span><span class="s1">in </span><span class="s2">num_cols </span><span class="s1">if </span><span class="s2">df</span><span class="s3">[</span><span class="s2">x</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">() &gt; </span><span class="s2">drop_factor</span><span class="s3">]</span>
+<span class="s2">num_cols_miss </span><span class="s3">= [</span><span class="s2">x </span><span class="s1">for </span><span class="s2">x </span><span class="s1">in </span><span class="s2">num_cols </span><span class="s1">if </span><span class="s2">df</span><span class="s3">[</span><span class="s2">x</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">() &gt; </span><span class="s5">0 </span><span class="s1">and </span><span class="s2">x </span><span class="s1">not in </span><span class="s2">drop_num_cols</span><span class="s3">]</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">f'Numerical Columns with missing values (</span><span class="s1">{</span><span class="s2">len</span><span class="s3">(</span><span class="s2">num_cols_miss</span><span class="s3">)</span><span class="s1">}</span><span class="s4">)</span><span class="s1">\n</span><span class="s4">'</span><span class="s3">,</span><span class="s2">num_cols_miss</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">f'Dropping (</span><span class="s1">{</span><span class="s2">len</span><span class="s3">(</span><span class="s2">drop_num_cols</span><span class="s3">)</span><span class="s1">}</span><span class="s4">)</span><span class="s1">\n</span><span class="s4">'</span><span class="s3">, </span><span class="s2">drop_num_cols</span><span class="s3">)</span>
+<span class="s0">#%% 
+# checking if they are outliers to median and non or minimal outliers mean is used</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols_miss</span><span class="s3">].</span><span class="s2">plot</span><span class="s3">(</span><span class="s2">kind</span><span class="s3">=</span><span class="s4">'box'</span><span class="s3">, </span><span class="s2">subplots</span><span class="s3">=</span><span class="s1">True</span><span class="s3">, </span><span class="s2">layout</span><span class="s3">=(</span><span class="s5">10</span><span class="s3">,</span><span class="s5">2</span><span class="s3">), </span><span class="s2">figsize</span><span class="s3">=(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">50</span><span class="s3">),</span><span class="s2">sharex</span><span class="s3">=</span><span class="s1">False</span><span class="s3">, </span><span class="s2">sharey</span><span class="s3">=</span><span class="s1">False</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span><span class="s2">;</span>
+<span class="s0">#%% 
+# filling missing numerical values</span>
+<span class="s1">from </span><span class="s2">sklearn</span><span class="s3">.</span><span class="s2">impute </span><span class="s1">import </span><span class="s2">SimpleImputer</span>
+
+<span class="s2">si </span><span class="s3">= </span><span class="s2">SimpleImputer</span><span class="s3">(</span><span class="s2">strategy</span><span class="s3">=</span><span class="s4">'median'</span><span class="s3">)</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols_miss</span><span class="s3">] = </span><span class="s2">si</span><span class="s3">.</span><span class="s2">fit_transform</span><span class="s3">(</span><span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols_miss</span><span class="s3">])</span>
+
+<span class="s0">#%% md 
+</span><span class="s2">## Treating Missing Values for Categorical Columns 
+</span><span class="s0">#%% 
+# Treating Categorical columns</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">obj_cols</span><span class="s3">].</span><span class="s2">describe</span><span class="s3">().</span><span class="s2">T</span>
+<span class="s0">#%% 
+</span><span class="s2">df</span><span class="s3">[</span><span class="s2">obj_cols</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">().</span><span class="s2">sort_values</span><span class="s3">(</span><span class="s2">ascending</span><span class="s3">=</span><span class="s1">False</span><span class="s3">)</span>
+<span class="s0">#%% 
+#drop 3/4 of the observations</span>
+<span class="s2">drop_obj_cols </span><span class="s3">= [</span><span class="s2">x </span><span class="s1">for </span><span class="s2">x </span><span class="s1">in </span><span class="s2">obj_cols </span><span class="s1">if </span><span class="s2">df</span><span class="s3">[</span><span class="s2">x</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">() &gt; </span><span class="s2">drop_factor</span><span class="s3">]</span>
+<span class="s2">obj_cols_miss </span><span class="s3">= [</span><span class="s2">x </span><span class="s1">for </span><span class="s2">x </span><span class="s1">in </span><span class="s2">obj_cols </span><span class="s1">if </span><span class="s2">df</span><span class="s3">[</span><span class="s2">x</span><span class="s3">].</span><span class="s2">isna</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">() &gt; </span><span class="s5">0 </span><span class="s1">and </span><span class="s2">x </span><span class="s1">not in </span><span class="s2">drop_obj_cols</span><span class="s3">]</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">f'Object Columns with missing values (</span><span class="s1">{</span><span class="s2">len</span><span class="s3">(</span><span class="s2">obj_cols_miss</span><span class="s3">)</span><span class="s1">}</span><span class="s4">)</span><span class="s1">\n</span><span class="s4">'</span><span class="s3">,</span><span class="s2">obj_cols_miss</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">f'Dropping (</span><span class="s1">{</span><span class="s2">len</span><span class="s3">(</span><span class="s2">drop_obj_cols</span><span class="s3">)</span><span class="s1">}</span><span class="s4">)</span><span class="s1">\n</span><span class="s4">'</span><span class="s3">, </span><span class="s2">drop_obj_cols</span><span class="s3">)</span>
+<span class="s0">#%% 
+# Dropping columns with more 3/4 missing values</span>
+<span class="s2">df</span><span class="s3">.</span><span class="s2">drop</span><span class="s3">(</span><span class="s2">drop_obj_cols</span><span class="s3">, </span><span class="s2">axis</span><span class="s3">=</span><span class="s5">1</span><span class="s3">, </span><span class="s2">inplace</span><span class="s3">=</span><span class="s1">True</span><span class="s3">)</span>
+<span class="s0">#%% 
+# filling missing values of categorical with the most frequent</span>
+<span class="s1">from </span><span class="s2">sklearn</span><span class="s3">.</span><span class="s2">impute </span><span class="s1">import </span><span class="s2">SimpleImputer</span>
+<span class="s2">si </span><span class="s3">= </span><span class="s2">SimpleImputer</span><span class="s3">(</span><span class="s2">strategy</span><span class="s3">=</span><span class="s4">'most_frequent'</span><span class="s3">)</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">obj_cols_miss</span><span class="s3">] = </span><span class="s2">si</span><span class="s3">.</span><span class="s2">fit_transform</span><span class="s3">(</span><span class="s2">df</span><span class="s3">[</span><span class="s2">obj_cols_miss</span><span class="s3">])</span>
+<span class="s0">#%% 
+</span><span class="s2">x</span><span class="s3">, </span><span class="s2">num_cols</span><span class="s3">, </span><span class="s2">obj_cols </span><span class="s3">= </span><span class="s2">reset_var</span><span class="s3">(</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">'Numerical Features:'</span><span class="s3">,</span><span class="s2">num_cols</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">], </span><span class="s4">'</span><span class="s1">\n</span><span class="s4">Categorical Features'</span><span class="s3">,</span><span class="s2">obj_cols</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">])</span>
+<span class="s0">#%% 
+</span><span class="s2">dup_cols </span><span class="s3">= </span><span class="s2">df</span><span class="s3">[</span><span class="s2">df</span><span class="s3">.</span><span class="s2">duplicated</span><span class="s3">()]</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s2">dup_cols</span><span class="s3">.</span><span class="s2">count</span><span class="s3">().</span><span class="s2">sum</span><span class="s3">()) </span><span class="s0"># no duplicate found</span>
+<span class="s0">#%% 
+# dropping Numerical columns with nunique values equal to number of observations</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols</span><span class="s3">].</span><span class="s2">nunique</span><span class="s3">().</span><span class="s2">sort_values</span><span class="s3">(</span><span class="s2">ascending</span><span class="s3">=</span><span class="s1">False</span><span class="s3">)</span>
+<span class="s0">#%% 
+</span><span class="s2">column_pick </span><span class="s3">= []</span>
+<span class="s1">for </span><span class="s2">i </span><span class="s1">in </span><span class="s2">num_cols</span><span class="s3">:</span>
+    <span class="s2">cols</span><span class="s3">, </span><span class="s2">num_uniq</span><span class="s3">, </span><span class="s2">unique </span><span class="s3">= </span><span class="s2">i</span><span class="s3">, </span><span class="s2">df</span><span class="s3">[</span><span class="s2">i</span><span class="s3">].</span><span class="s2">nunique</span><span class="s3">(), </span><span class="s2">df</span><span class="s3">[</span><span class="s2">i</span><span class="s3">].</span><span class="s2">unique</span><span class="s3">()</span>
+    <span class="s1">if </span><span class="s2">num_uniq </span><span class="s3">== </span><span class="s2">x</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">[</span><span class="s5">0</span><span class="s3">]:</span>
+        <span class="s2">column_pick</span><span class="s3">.</span><span class="s2">append</span><span class="s3">(</span><span class="s2">cols</span><span class="s3">)</span>
+        
+<span class="s2">print</span><span class="s3">(</span><span class="s4">'dropped</span><span class="s1">\n</span><span class="s4">'</span><span class="s3">,</span><span class="s2">column_pick</span><span class="s3">)</span>
+<span class="s2">df</span><span class="s3">.</span><span class="s2">drop</span><span class="s3">(</span><span class="s2">column_pick</span><span class="s3">, </span><span class="s2">axis</span><span class="s3">=</span><span class="s5">1</span><span class="s3">, </span><span class="s2">inplace</span><span class="s3">=</span><span class="s1">True</span><span class="s3">)</span>
+    
+<span class="s0">#%% 
+</span><span class="s1">for </span><span class="s2">i </span><span class="s1">in </span><span class="s2">obj_cols</span><span class="s3">:</span>
+    <span class="s2">cols</span><span class="s3">, </span><span class="s2">num_uniq</span><span class="s3">, </span><span class="s2">unique </span><span class="s3">= </span><span class="s2">i</span><span class="s3">, </span><span class="s2">df</span><span class="s3">[</span><span class="s2">i</span><span class="s3">].</span><span class="s2">nunique</span><span class="s3">(), </span><span class="s2">df</span><span class="s3">[</span><span class="s2">i</span><span class="s3">].</span><span class="s2">unique</span><span class="s3">()</span>
+    <span class="s2">print</span><span class="s3">(</span><span class="s2">cols</span><span class="s3">, </span><span class="s2">num_uniq</span><span class="s3">, </span><span class="s2">unique</span><span class="s3">)</span>
+<span class="s0">#%% md 
+</span><span class="s2">## Steps followed to clean the data  
+ 
+* Inspection on the data to find missing values 
+* dropping ['Alley', 'Mas Vnr Type', 'Fireplace Qu', 'Pool QC', 'Fence', 'Misc Feature'] columns from obj_cols because of number of missing values is more than 3/4 of the observations 
+* filling missing values with median and most_frequent 
+* dropping ['Order', 'PID'] columns because nunique is thesame with number observations 
+* zero duplicated observations is found 
+* outliers aren't treated rather are allowed to be mitigated at the preprocessing stage 
+*  
+</span><span class="s0">#%% 
+</span><span class="s2">x</span><span class="s3">, </span><span class="s2">num_cols</span><span class="s3">, </span><span class="s2">obj_cols </span><span class="s3">= </span><span class="s2">reset_var</span><span class="s3">(</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">df</span><span class="s3">[</span><span class="s2">num_cols</span><span class="s3">].</span><span class="s2">corr</span><span class="s3">()</span>
+<span class="s0">#%% 
+</span><span class="s2">corr_num </span><span class="s3">= </span><span class="s2">num_cols</span><span class="s3">.</span><span class="s2">to_list</span><span class="s3">()+[</span><span class="s2">y</span><span class="s3">]</span>
+<span class="s2">correlation_matrix </span><span class="s3">= </span><span class="s2">df</span><span class="s3">[</span><span class="s2">corr_num</span><span class="s3">].</span><span class="s2">corr</span><span class="s3">()</span>
+<span class="s2">saleprice_correlation </span><span class="s3">= </span><span class="s2">correlation_matrix</span><span class="s3">[</span><span class="s2">y</span><span class="s3">].</span><span class="s2">sort_values</span><span class="s3">(</span><span class="s2">ascending</span><span class="s3">=</span><span class="s1">False</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s2">saleprice_correlation</span><span class="s3">)</span>
+
+<span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">heatmap</span><span class="s3">(</span><span class="s2">correlation_matrix</span><span class="s3">, </span><span class="s2">annot</span><span class="s3">=</span><span class="s1">True</span><span class="s3">, </span><span class="s2">cmap</span><span class="s3">=</span><span class="s4">'coolwarm'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">gcf</span><span class="s3">().</span><span class="s2">set_size_inches</span><span class="s3">(</span><span class="s5">20</span><span class="s3">,</span><span class="s5">15</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+<span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">set</span><span class="s3">(</span><span class="s2">rc</span><span class="s3">={</span><span class="s4">'figure.figsize'</span><span class="s3">:(</span><span class="s5">10</span><span class="s3">,</span><span class="s5">6</span><span class="s3">)})</span>
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">scatterplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Gr Liv Area'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">color</span><span class="s3">=</span><span class="s4">'blue'</span><span class="s3">, </span><span class="s2">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+<span class="s0">#%% md 
+</span><span class="s2">from the plot it shows that as saleprice increase, the size of Gr Liv Area increases which shows a positive correlaton with a very strong relationship. 
+</span><span class="s0">#%% 
+</span><span class="s2">plt</span><span class="s3">.</span><span class="s2">figure</span><span class="s3">(</span><span class="s2">figsize</span><span class="s3">=(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">6</span><span class="s3">), </span><span class="s2">edgecolor</span><span class="s3">=</span><span class="s4">'blue'</span><span class="s3">)</span>
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">scatterplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Total Bsmt SF'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">, </span><span class="s2">color</span><span class="s3">=</span><span class="s4">'red'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+<span class="s0">#%% md 
+</span><span class="s2">from the plot there is a very strong positive relationship between Total Bsmt Sf and SalePrice with ome outliers that needed further investigations. 
+the relationship is linear and Positive variation is not spread.. 
+</span><span class="s0">#%% 
+</span><span class="s2">plt</span><span class="s3">.</span><span class="s2">figure</span><span class="s3">(</span><span class="s2">figsize</span><span class="s3">=(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">6</span><span class="s3">))</span>
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">boxplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Overall Qual'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+
+<span class="s0">#%% md 
+</span><span class="s2">As the SalePrice increase the Overall Qual of the houses increases the houses with highest quality have the highest SalePrice 
+it shows a linear relationship between the features. 
+</span><span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">scatterplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Year Built'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">, </span><span class="s2">hue</span><span class="s3">=</span><span class="s4">'Overall Qual'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">scatterplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Year Remod/Add'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">, </span><span class="s2">hue</span><span class="s3">=</span><span class="s4">'Overall Qual'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+<span class="s0">#%% md 
+</span><span class="s2">The houses built later and remodelled tends to have moderate positive correlation with the SalePrice mean they might tend to have more saleprices in market and have more Quality. 
+</span><span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">set</span><span class="s3">(</span><span class="s2">rc</span><span class="s3">={</span><span class="s4">'figure.figsize'</span><span class="s3">:(</span><span class="s5">16</span><span class="s3">,</span><span class="s5">8</span><span class="s3">)})</span>
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">boxplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Neighborhood'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">xticks</span><span class="s3">(</span><span class="s2">rotation</span><span class="s3">=</span><span class="s5">45</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+
+<span class="s0">#%% md 
+</span><span class="s2">StoneBr and NindRigde Neighborhood is mostly prepared then followed by Noridge while Lanmark and NPKVill, BrDate are less preffered with minimal number of housing and lower housing Price. 
+The Neighborhood preferred by People tend cost more and have higher saleprice. 
+</span><span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">boxplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Bldg Type'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+<span class="s0">#%% md 
+</span><span class="s2">!Fam  and TwnsE building Type is appreciated by many tend to have high market value. 
+</span><span class="s0">#%% 
+</span><span class="s2">sns</span><span class="s3">.</span><span class="s2">boxplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'House Style'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+
+<span class="s2">sns</span><span class="s3">.</span><span class="s2">boxplot</span><span class="s3">(</span><span class="s2">x</span><span class="s3">=</span><span class="s4">'Garage Type'</span><span class="s3">, </span><span class="s2">y</span><span class="s3">=</span><span class="s4">'SalePrice'</span><span class="s3">, </span><span class="s2">data</span><span class="s3">=</span><span class="s2">df</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span>
+
+<span class="s0">#%% md 
+</span><span class="s2">for Housing Style, 2Story, 1Story and 2.5Unit accomodate more people with good market price, but doesnt influence salePrice while Builtin Garage type is prefered tend to cost more in the market SalePrice but that doesn't prove trend in the housing salesPrice increase.</span></pre>
+</body>
+</html>
