@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ec2dd5a-1324-4a1f-b1f9-db7e81f6e8de" name="Changes" comment="Adding image files">
-      <change afterPath="$PROJECT_DIR$/EDA_Report/~$ploratory Data Analysis ames Housing.docx" afterDir="false" />
+    <list default="true" id="2ec2dd5a-1324-4a1f-b1f9-db7e81f6e8de" name="Changes" comment="Pictures">
+      <change afterPath="$PROJECT_DIR$/data/cleaned_data.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model_building.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EDA_Report/Exploratory Data Analysis ames Housing.docx" beforeDir="false" afterPath="$PROJECT_DIR$/EDA_Report/Exploratory Data Analysis ames Housing.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda_ames_housing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/eda_ames_housing.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +19,13 @@
     <option name="printScope" value="1" />
     <option name="OPEN_IN_BROWSER" value="true" />
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jupyter Notebook" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -39,16 +47,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/ABDURRAHMAN IDRIS/DataspellProjects/datas",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ABDURRAHMAN IDRIS/DataspellProjects/datas&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ABDURRAHMAN IDRIS\DataspellProjects\datas" />
@@ -86,6 +94,8 @@
     <MESSAGE value="dataset" />
     <MESSAGE value="EDA DONE" />
     <MESSAGE value="Adding image files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding image files" />
+    <MESSAGE value="Revisiting Variables" />
+    <MESSAGE value="Pictures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pictures" />
   </component>
 </project>
